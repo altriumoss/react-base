@@ -1,0 +1,36 @@
+server {
+
+  listen 0.0.0.0:80;
+
+  root  /usr/share/nginx/html;
+  index index.html index.htm;
+  
+  location / {
+      sub_filter_types text/html;
+      sub_filter '__REACT_SERVER_CONFIG__' '${REACT_SERVER_CONFIG}';
+      sub_filter_once on;
+      try_files $uri $uri/ =404;
+      expires 0;
+      add_header Cache-Control "no-store, no-cache, must-revalidate";
+  }
+
+  location = /service-worker.js {
+      expires 0;
+      add_header Cache-Control "no-store, no-cache, must-revalidate";
+  }
+
+    # Media: images, icons, video, audio, HTC
+  location ~* \.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ {
+      expires max;
+      access_log off;
+      add_header Cache-Control "public";
+  }
+
+    # Javascript, CSS and Font files
+  location ~* \.(?:css|js|woff|woff2|ttf|otf)$ {
+      try_files $uri =404;
+      expires max;
+      access_log off;
+      add_header Cache-Control "public";
+  }
+}
